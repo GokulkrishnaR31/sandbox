@@ -146,32 +146,6 @@ export default function CodeEditorPanel({
         />
       </div>
 
-      {/* ── Stdin Collapsible Drawer ───────────────────────────────────── */}
-      <div style={{ borderTop: '1px solid var(--color-surface-border)', background: 'var(--color-surface-base)', padding: '8px 14px' }}>
-        <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-          STDIN / INPUT
-        </div>
-        <textarea
-          id="stdin-input"
-          value={stdin}
-          onChange={e => setStdin(e.target.value)}
-          rows={2}
-          placeholder="Enter input passed to stdout (one value per line)..."
-          style={{
-            width: '100%',
-            background: 'var(--color-surface-card)',
-            color: 'var(--color-text-primary)',
-            border: '1px solid var(--color-surface-border)',
-            borderRadius: '6px',
-            padding: '6px 10px',
-            fontSize: '0.8rem',
-            fontFamily: 'var(--font-mono)',
-            resize: 'none',
-            outline: 'none',
-          }}
-        />
-      </div>
-
       {/* ── Action Buttons ─────────────────────────────────────────────── */}
       <div className="flex items-center gap-2 p-3" style={{ borderTop: '1px solid var(--color-surface-border)', background: 'var(--color-surface-raised)' }}>
         <button

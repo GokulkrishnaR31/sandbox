@@ -90,10 +90,6 @@ export default function App() {
     return DEFAULT_STUBS[language] || DEFAULT_STUBS.python;
   });
 
-  const [stdin, setStdin] = useState(() => {
-    try { return localStorage.getItem('cognito_stdin') || '5'; } catch { return '5'; }
-  });
-
   const [testCases, setTestCases] = useState(() => {
     try {
       const saved = localStorage.getItem('cognito_testCases');
@@ -108,13 +104,12 @@ export default function App() {
   useEffect(() => {
     try {
       localStorage.setItem('cognito_lang', language);
-      localStorage.setItem('cognito_stdin', stdin);
       localStorage.setItem('cognito_testCases', JSON.stringify(testCases));
       localStorage.setItem('cognito_codeByLang', JSON.stringify({ ...codeByLang, [language]: code }));
     } catch (e) {
       console.warn('localStorage sync failed:', e.message);
     }
-  }, [language, code, stdin, testCases, codeByLang]);
+  }, [language, code, testCases, codeByLang]);
 
   // ── Language Change Handler — preserves code per language ──────────────────
   const handleLanguageChange = (newLang) => {
@@ -182,7 +177,7 @@ export default function App() {
     setErrorAnalysis(null);
 
     try {
-      const result = await executeCode(code, language, stdin, STUDENT_ID);
+      const result = await executeCode(code, language, '', STUDENT_ID);
       setOutput(result);
 
       // Auto-trigger error analysis if there's a stderr
@@ -272,14 +267,12 @@ export default function App() {
     try {
       localStorage.removeItem('cognito_lang');
       localStorage.removeItem('cognito_codeByLang');
-      localStorage.removeItem('cognito_stdin');
       localStorage.removeItem('cognito_testCases');
     } catch {}
 
     setLanguage('python');
     setCode(DEFAULT_STUBS.python);
     setCodeByLang(DEFAULT_STUBS);
-    setStdin('5');
     setTestCases(DEFAULT_TEST_CASES);
     setOutput(null);
     setTestResults(null);
@@ -346,7 +339,6 @@ export default function App() {
             language={language} setLanguage={setLanguage}
             onLanguageChange={handleLanguageChange}
             onResetCode={handleResetCode}
-            stdin={stdin} setStdin={setStdin}
             onRun={handleRun}
             onRunTests={handleRunTests}
             onAnalyze={handleAnalyze}
@@ -412,16 +404,6 @@ export default function App() {
                         Exit {output.exitCode}
                       </span>
                     </div>
-
-                    {/* Input used */}
-                    {stdin && (
-                      <div style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>📥 Input (stdin)</div>
-                        <pre style={{ background: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 8, padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.83rem', color: 'var(--color-brand-primary)', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                          {stdin}
-                        </pre>
-                      </div>
-                    )}
 
                     {/* stdout */}
                     {output.stdout && (
